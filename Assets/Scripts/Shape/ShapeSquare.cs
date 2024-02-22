@@ -6,10 +6,20 @@ using UnityEngine.UI;
 public class ShapeSquare : MonoBehaviour
 {
  public Image occupiedImage;
+ public Image symbolImage;
+ public List<Sprite> symbols; 
 
  void Start()
  {
     occupiedImage.gameObject.SetActive(false);
+
+    // Losowanie indeksu symbolu i ustawienie go w occupiedImage
+    int randomIndex = Random.Range(0, symbols.Count);
+    symbolImage.sprite = symbols[randomIndex];
+
+    // Pokazanie occupiedImage
+
+    symbolImage.gameObject.SetActive(true);
  }
 
  public void DeactivateSquare()
@@ -20,18 +30,22 @@ public class ShapeSquare : MonoBehaviour
 
  public void ActivateSquare()
  {
-   gameObject.GetComponent<BoxCollider2D>().enabled = true;
-   gameObject.SetActive(true);
+    gameObject.GetComponent<BoxCollider2D>().enabled = true;
+    gameObject.SetActive(true);
+    symbolImage.gameObject.SetActive(true);
+
  }
 
  public void SetOccupied()
  {
   occupiedImage.gameObject.SetActive(true);
+   symbolImage.gameObject.SetActive(true);
  }
 
 
  public void UnsetOccupied()
  {
   occupiedImage.gameObject.SetActive(false);
+   symbolImage.gameObject.SetActive(true);
  }
 }

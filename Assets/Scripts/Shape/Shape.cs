@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler,
     IPointerDownHandler
@@ -17,7 +18,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
 
     public int TotalSquareNumber{get;set;}
 
-    private List<GameObject> currentShape = new List<GameObject>();
+    public List<GameObject> currentShape = new List<GameObject>();
     private Vector3 shapeStartScale;
     private RectTransform transformed;
     private bool shapeDraggable = true;
@@ -275,9 +276,32 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         return number;
     }
 
+    public List<Sprite> GetShapeSymbols()
+    {
+        List<Sprite> symbols = new List<Sprite>();
+
+        foreach (var square in currentShape)
+        {
+            if (square.activeSelf)
+            {
+                ShapeSquare shapeSquare = square.GetComponent<ShapeSquare>();
+                if (shapeSquare != null)
+                {
+                    Image symbolImage = shapeSquare.symbolImage;
+                    if (symbolImage != null)
+                    {
+                        symbols.Add(symbolImage.sprite);
+                    }
+                }
+            }
+        }
+
+        return symbols;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-
+        RotateShape();
     }
      public void OnPointerUp(PointerEventData eventData)
      {
@@ -324,5 +348,11 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
 
             transformed.transform.localPosition = startPosition;
         //transformed.transform.localScale = shapeStartScale;
+    }
+
+    private void RotateShape()
+    {
+        // Obracaj kształt o 90 stopni w prawo
+        transformed.Rotate(Vector3.forward, -90f);
     }
 }

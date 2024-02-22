@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MyGrid : MonoBehaviour
 {
@@ -93,6 +95,7 @@ public class MyGrid : MonoBehaviour
 
     private void CheckIfShapeCanBePlaced()
     {
+
         var squareIndexes = new List<int>();
         foreach(var square in gridSquares)
         {
@@ -111,10 +114,36 @@ public class MyGrid : MonoBehaviour
 
         if(currentSelectedShape.TotalSquareNumber == squareIndexes.Count)
         {
-            foreach(var squareIndex in squareIndexes)
+             // Zbieramy symbole z aktualnego kształtu
+
+        List<Sprite> symbols = new List<Sprite>();
+
+        foreach (var square in currentSelectedShape.currentShape)
+        {
+            if (square.activeSelf)
             {
-                gridSquares[squareIndex].GetComponent<GridSquare>().PlaceSquareOnTheBoard();
+                ShapeSquare shapeSquare = square.GetComponent<ShapeSquare>();
+                if (shapeSquare != null)
+                {
+                    Image symbolImage = shapeSquare.symbolImage;
+                    if (symbolImage != null)
+                    {
+                        symbols.Add(symbolImage.sprite);
+                    }
+                }
             }
+        }
+        symbols = currentSelectedShape.GetShapeSymbols();
+
+        // Przypisanie symboli na planszy
+        for (int i = 0; i < squareIndexes.Count; i++)
+        {
+            var gridSquare = gridSquares[squareIndexes[i]].GetComponent<GridSquare>();
+            gridSquare.PlaceSquareOnTheBoard();
+            gridSquare.SetSymbol(symbols[i]);
+            
+        }
+
 
             var shapeLeft = 0;
 
