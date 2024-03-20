@@ -30,8 +30,11 @@ public class ShapeSquare : MonoBehaviour
 
  public void ActivateSquare()
  {
+  
     gameObject.GetComponent<BoxCollider2D>().enabled = true;
     gameObject.SetActive(true);
+
+    
     symbolImage.gameObject.SetActive(true);
 
  }
@@ -48,4 +51,19 @@ public class ShapeSquare : MonoBehaviour
   occupiedImage.gameObject.SetActive(false);
    symbolImage.gameObject.SetActive(true);
  }
+
+public void ReloadSymbol()
+{
+    if (gameObject.activeSelf) // Upewnij się, że kwadrat jest aktywny
+    {
+        // Losowanie indeksu symbolu i ustawienie go w occupiedImage
+        int randomIndex = Random.Range(0, symbols.Count);
+        symbolImage.sprite = symbols[randomIndex];
+
+        // Pokazanie symbolImage
+        symbolImage.gameObject.SetActive(true);
+    }
+}
+
+
 }

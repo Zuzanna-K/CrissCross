@@ -103,46 +103,68 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     {
         transformed.localPosition = startPosition;
         CreateShape(shapeData);
+        ReloadShapeSymbols(); // Dodaj to, aby ponownie losować symbole dla nowego kształtu
+
     }
 
-    public void CreateShape(ShapeData shapeData)
+    public void ReloadShapeSymbols()
     {
-        currentShapeData = shapeData;
-        TotalSquareNumber = GetNumberOfSquares(shapeData);
-
-        while(currentShape.Count <= TotalSquareNumber)
+        foreach (var square in currentShape)
         {
-            currentShape.Add(Instantiate(squareShapeImage, transform) as GameObject);
+            if (square.activeSelf)
+            {
+                ShapeSquare shapeSquare = square.GetComponent<ShapeSquare>();
+                if (shapeSquare != null)
+                {
+                    shapeSquare.ReloadSymbol(); // Nowa funkcja do ponownego losowania symbolu
+                }
+            }
         }
+    }
 
-        foreach(var square in currentShape)
-        {
-            square.gameObject.transform.position = Vector3.zero;
-            square.gameObject.SetActive(false);
-        }
 
-        var squareRect = squareShapeImage.GetComponent<RectTransform>();
-        var moveDistance = new Vector2(squareRect.rect.width * squareRect.localScale.x,
+public void CreateShape(ShapeData shapeData)
+{
+    currentShapeData = shapeData;
+    TotalSquareNumber = GetNumberOfSquares(shapeData);
+
+    while (currentShape.Count < TotalSquareNumber)
+    {
+        GameObject newSquare = Instantiate(squareShapeImage, transform) as GameObject;
+        newSquare.gameObject.transform.position = Vector3.zero;
+        newSquare.gameObject.SetActive(false);
+
+        currentShape.Add(newSquare);
+    }
+
+    var squareRect = squareShapeImage.GetComponent<RectTransform>();
+    var moveDistance = new Vector2(squareRect.rect.width * squareRect.localScale.x,
         squareRect.rect.height * squareRect.localScale.y);
 
-        int currentIndexInist = 0;
+    int currentIndexInist = 0;
 
-        for (var row =0; row < shapeData.rows ; row++)
+    for (var row = 0; row < shapeData.rows; row++)
+    {
+        for (var column = 0; column < shapeData.columns; column++)
         {
-          for (var column =0; column < shapeData.columns ; column++) 
-          {
-            if(shapeData.board[row].column[column]) // aktive kwadracik
+            if (shapeData.board[row].column[column]) // aktywny kwadracik
             {
                 currentShape[currentIndexInist].SetActive(true);
                 currentShape[currentIndexInist].GetComponent<RectTransform>().localPosition =
-                    new Vector2(GetXPositionForShapeSquare(shapeData,column,moveDistance),
-                    GetYPositionForShapeSquare(shapeData,row,moveDistance));
+                    new Vector2(GetXPositionForShapeSquare(shapeData, column, moveDistance),
+                        GetYPositionForShapeSquare(shapeData, row, moveDistance));
 
-                    currentIndexInist++;
+                // Losowanie indeksu symbolu i ustawienie go w occupiedImage
+                ShapeSquare shapeSquare = currentShape[currentIndexInist].GetComponent<ShapeSquare>();
+                int randomIndex = Random.Range(0, shapeSquare.symbols.Count);
+                shapeSquare.symbolImage.sprite = shapeSquare.symbols[randomIndex];
+
+                currentIndexInist++;
             }
-          }
         }
     }
+}
+
 
     private float GetYPositionForShapeSquare(ShapeData shapeData, int row, Vector2 moveDistance)
     {

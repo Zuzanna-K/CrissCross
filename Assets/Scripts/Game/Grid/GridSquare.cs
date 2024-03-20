@@ -19,7 +19,7 @@ public class GridSquare : MonoBehaviour
     public int squareIndex;
     public bool squareOccupied; // czy już jest zajęty przez poprzednie kafelki
 
-    private ShapeSquare collidingShapeSquare;
+    public ShapeSquare collidingShapeSquare;
 
     public ShapeSquare GetCollidingShapeSquare()
     {
@@ -46,7 +46,7 @@ public class GridSquare : MonoBehaviour
     {
         hooverImage.gameObject.SetActive(false);
         activeImage.gameObject.SetActive(true);
-      //  symbolImage.gameObject.SetActive(true);
+        //symbolImage.gameObject.SetActive(true);
 
         selected = true;
         squareOccupied = true;
@@ -55,6 +55,7 @@ public class GridSquare : MonoBehaviour
 
     public void SetSymbol(Sprite symbolSprite)
     {
+        //symbolImage.sprite = collidingShapeSquare.symbolImage.sprite;
         symbolImage.sprite = symbolSprite;
         symbolImage.gameObject.SetActive(true);
     }
@@ -84,10 +85,12 @@ public class GridSquare : MonoBehaviour
         if(squareOccupied == false)
         {
             hooverImage.gameObject.SetActive(true);
+            Image symbol = collision.GetComponent<ShapeSquare>().symbolImage;
+            symbolImage.sprite = symbol.sprite;
         }
         else if(collision.GetComponent<ShapeSquare>() != null)
         {
-            collidingShapeSquare = collision.GetComponent<ShapeSquare>();
+          //  collidingShapeSquare = collision.GetComponent<ShapeSquare>();
             collision.GetComponent<ShapeSquare>().SetOccupied();
         }
     }
@@ -99,12 +102,12 @@ public class GridSquare : MonoBehaviour
             selected = false;
             hooverImage.gameObject.SetActive(false);
         }
-        else if(collision.GetComponent<ShapeSquare>() != null)
+        if(collision.GetComponent<ShapeSquare>() != null && squareOccupied == true)
         {
             // Przepisanie symbolu
-           //  Image symbol = collision.GetComponent<ShapeSquare>().symbolImage;
-           //  symbolImage.sprite = symbol.sprite;
-           collidingShapeSquare = collision.GetComponent<ShapeSquare>();
+
+            symbolImage.gameObject.SetActive(true);
+          // collidingShapeSquare = collision.GetComponent<ShapeSquare>();
             collision.GetComponent<ShapeSquare>().UnsetOccupied();
 
         }

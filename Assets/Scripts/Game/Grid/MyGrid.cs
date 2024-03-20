@@ -18,16 +18,16 @@ public class MyGrid : MonoBehaviour
     private Vector2 offset =new(0.0f,0.0f);
     private List<GameObject> gridSquares = new();
 
-    
+    private void OnEnable()
+    {
+        GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
+    }
+
     private void OnDisable()
     {
         GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
     }
 
-    private void OnEnable()
-    {
-        GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
-    }
 
     void Start()
     {
@@ -93,84 +93,66 @@ public class MyGrid : MonoBehaviour
         }
     }
 
-    private void CheckIfShapeCanBePlaced()
+private void CheckIfShapeCanBePlaced()
+{
+    var squareIndexes = new List<int>();
+    var symbolsToAdd = new List<Sprite>(); // Lista symboli do dodania na planszę
+
+    foreach (var square in gridSquares)
     {
+        var gridSquare = square.GetComponent<GridSquare>();
 
-        var squareIndexes = new List<int>();
-        foreach(var square in gridSquares)
+        if (gridSquare.selected && !gridSquare.squareOccupied)
         {
-            var gridSquare = square.GetComponent<GridSquare>();
-
-            if(gridSquare.selected && !gridSquare.squareOccupied)
-            {
-                squareIndexes.Add(gridSquare.squareIndex);
-                gridSquare.selected = false;
-               // gridSquare.ActivateSquare();
-            }
+            squareIndexes.Add(gridSquare.squareIndex);
+            gridSquare.selected = false;
+            // gridSquare.ActivateSquare();
         }
+    }
 
-        var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
-        if(currentSelectedShape == null) return;
+    var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
+    if (currentSelectedShape == null) return;
 
-        if(currentSelectedShape.TotalSquareNumber == squareIndexes.Count)
-        {
-             // Zbieramy symbole z aktualnego kształtu
-
-        List<Sprite> symbols = new List<Sprite>();
-
-        foreach (var square in currentSelectedShape.currentShape)
-        {
-            if (square.activeSelf)
-            {
-                ShapeSquare shapeSquare = square.GetComponent<ShapeSquare>();
-                if (shapeSquare != null)
-                {
-                    Image symbolImage = shapeSquare.symbolImage;
-                    if (symbolImage != null)
-                    {
-                        symbols.Add(symbolImage.sprite);
-                    }
-                }
-            }
-        }
-        symbols = currentSelectedShape.GetShapeSymbols();
-
-        // Przypisanie symboli na planszy
+    if (currentSelectedShape.TotalSquareNumber == squareIndexes.Count)
+    {
+        // Przypisanie symboli z kształtu na planszę
         for (int i = 0; i < squareIndexes.Count; i++)
         {
             var gridSquare = gridSquares[squareIndexes[i]].GetComponent<GridSquare>();
             gridSquare.PlaceSquareOnTheBoard();
-            gridSquare.SetSymbol(symbols[i]);
+            //symbolsToAdd.Add(currentSelectedShape.currentShape[i].GetComponent<ShapeSquare>().symbolImage.sprite);
+           // gridSquare.SetSymbol(gridSquare.GetCollidingShapeSquare().symbolImage.sprite);
             
+           // gridSquare.SetSymbol(currentSelectedShape.currentShape[i].GetComponent<ShapeSquare>().symbolImage.sprite);
+
         }
 
 
-            var shapeLeft = 0;
+        var shapeLeft = 0;
 
-            foreach(var shape in shapeStorage.shapeList)
-            {
-                if(shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
-                {
-                    shapeLeft++;
-                }
-            }
-            
-
-            if(shapeLeft == 0)
-            {
-                GameEvents.RequestNewShape();
-            }
-            else
-            {
-                GameEvents.SetShapeInactive();
-            }
-
-   
-        }
-        else // cant place shape on the board
+        foreach (var shape in shapeStorage.shapeList)
         {
-            GameEvents.MoveShapeToStartPosition();
+            if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
+            {
+                shapeLeft++;
+            }
         }
 
+        if (shapeLeft == 0)
+        {
+            GameEvents.RequestNewShape();
+        }
+        else
+        {
+            GameEvents.SetShapeInactive();
+        }
     }
+    else // cant place shape on the board
+    {
+        GameEvents.MoveShapeToStartPosition();
+    }
+}
+
+
+
 }
