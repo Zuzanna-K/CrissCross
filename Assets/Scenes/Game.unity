@@ -883,8 +883,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeStorage: {fileID: 1276248326}
-  columns: 5
-  rows: 5
+  columns: 3
+  rows: 3
   squaresGap: 0
   gridSquare: {fileID: 7121847842365325854, guid: 77b96f88ef2ea7441ab05963c9521696, type: 3}
   startPosition: {x: -300, y: 300}

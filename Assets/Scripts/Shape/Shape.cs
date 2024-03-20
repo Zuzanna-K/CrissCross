@@ -78,6 +78,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
 
     private void SetShapeInactive()
     {
+           //GameEvents.EndOfGame();
         if(IsOnStartPosition() == false && IsAnyOfShapeSquareActive())
         {
             foreach (var square in currentShape)
@@ -85,6 +86,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
                 square.gameObject.SetActive(false);
             }
         }
+  
     }
 
     public void ActivateShape()
@@ -101,6 +103,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
 
     public void RequestNewShape(ShapeData shapeData)
     {
+        //GameEvents.EndOfGame();
         transformed.localPosition = startPosition;
         CreateShape(shapeData);
         ReloadShapeSymbols(); // Dodaj to, aby ponownie losować symbole dla nowego kształtu
@@ -125,6 +128,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
 
 public void CreateShape(ShapeData shapeData)
 {
+
     currentShapeData = shapeData;
     TotalSquareNumber = GetNumberOfSquares(shapeData);
 
@@ -351,6 +355,7 @@ public void CreateShape(ShapeData shapeData)
     {
        this.GetComponent<RectTransform>().localScale = shapeStartScale;
        GameEvents.CheckIfShapeCanBePlaced();
+
     }
 
     public void OnPointerDown(PointerEventData eventData)

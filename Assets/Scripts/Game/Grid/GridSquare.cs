@@ -19,6 +19,8 @@ public class GridSquare : MonoBehaviour
     public int squareIndex;
     public bool squareOccupied; // czy już jest zajęty przez poprzednie kafelki
 
+    public bool symbolPut;
+
     public ShapeSquare collidingShapeSquare;
 
     public ShapeSquare GetCollidingShapeSquare()
@@ -30,6 +32,7 @@ public class GridSquare : MonoBehaviour
     {
        selected = false;
        squareOccupied = false; 
+       symbolPut = false;
     }
 //temp
     public bool CanWeUseThisSquare()
@@ -107,10 +110,12 @@ public class GridSquare : MonoBehaviour
             // Przepisanie symbolu
 
             symbolImage.gameObject.SetActive(true);
+            symbolPut = true;
           // collidingShapeSquare = collision.GetComponent<ShapeSquare>();
             collision.GetComponent<ShapeSquare>().UnsetOccupied();
 
         }
+        GameEvents.EndOfGame();
     }
 
 

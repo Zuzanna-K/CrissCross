@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class MyGrid : MonoBehaviour
 {
@@ -21,11 +23,13 @@ public class MyGrid : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
+        GameEvents.EndOfGame += EndOfGame;
     }
 
     private void OnDisable()
     {
         GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
+        GameEvents.EndOfGame -= EndOfGame;
     }
 
 
@@ -94,7 +98,7 @@ public class MyGrid : MonoBehaviour
     }
 
 private void CheckIfShapeCanBePlaced()
-{
+{   
     var squareIndexes = new List<int>();
     var symbolsToAdd = new List<Sprite>(); // Lista symboli do dodania na planszę
 
@@ -137,7 +141,12 @@ private void CheckIfShapeCanBePlaced()
                 shapeLeft++;
             }
         }
-
+        
+        // if (shapeLeft == 0 && ConditionToEnd())
+        // {
+        //     EndOfGame();
+        // }
+        
         if (shapeLeft == 0)
         {
             GameEvents.RequestNewShape();
@@ -151,8 +160,47 @@ private void CheckIfShapeCanBePlaced()
     {
         GameEvents.MoveShapeToStartPosition();
     }
+
+   // EndOfGame();
+
 }
 
+private void EndOfGame()
+{
+    if (ConditionToEnd() == true)
+    {
 
+        SceneManager.LoadScene("Game");
+    }
+    else return;
+}
+
+private bool ConditionToEnd()
+{
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < columns; j++)
+        {
+            var currentSquare = gridSquares[i * columns + j].GetComponent<GridSquare>();
+
+            if (!currentSquare.symbolPut)
+            {
+                if (j > 0 && !gridSquares[i * columns + j - 1].GetComponent<GridSquare>().symbolPut)
+                    return false;
+                
+                if (j < columns - 1 && !gridSquares[i * columns + j + 1].GetComponent<GridSquare>().symbolPut)
+                    return false;
+
+                if (i > 0 && !gridSquares[(i - 1) * columns + j].GetComponent<GridSquare>().symbolPut)
+                    return false;
+
+                if (i < rows - 1 && !gridSquares[(i + 1) * columns + j].GetComponent<GridSquare>().symbolPut)
+                    return false;
+            }
+        }
+    }
+
+    return true; 
+}
 
 }
