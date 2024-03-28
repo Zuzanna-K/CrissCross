@@ -9,6 +9,8 @@ public class ShapeSquare : MonoBehaviour
  public Image symbolImage;
  public List<Sprite> symbols; 
 
+public int symbolIndex = 0; 
+
  void Start()
  {
     occupiedImage.gameObject.SetActive(false);
@@ -16,6 +18,7 @@ public class ShapeSquare : MonoBehaviour
     // Losowanie indeksu symbolu i ustawienie go w occupiedImage
     int randomIndex = Random.Range(0, symbols.Count);
     symbolImage.sprite = symbols[randomIndex];
+    symbolIndex = randomIndex;
 
     // Pokazanie occupiedImage
 
@@ -59,7 +62,7 @@ public void ReloadSymbol()
         // Losowanie indeksu symbolu i ustawienie go w occupiedImage
         int randomIndex = Random.Range(0, symbols.Count);
         symbolImage.sprite = symbols[randomIndex];
-
+        symbolIndex = randomIndex;
         // Pokazanie symbolImage
         symbolImage.gameObject.SetActive(true);
     }

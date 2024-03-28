@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class MyGrid : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class MyGrid : MonoBehaviour
     public Vector2 startPosition = new (0.0f,0.0f);
     public float squareScale = 0.5f;
     public float everySquareOffset = 0.0f;
+
+    public Text finalScore;
 
     private Vector2 offset =new(0.0f,0.0f);
     private List<GameObject> gridSquares = new();
@@ -170,7 +173,8 @@ private void EndOfGame()
     if (ConditionToEnd() == true)
     {
 
-        SceneManager.LoadScene("Game");
+        //SceneManager.LoadScene("Game");
+        finalScore.text = "    Final Score: "+ scoring().ToString();
     }
     else return;
 }
@@ -202,5 +206,113 @@ private bool ConditionToEnd()
 
     return true; 
 }
+
+private int scoring()
+{
+    int totalScore = 0;
+
+    // Sprawdź rząd
+    for (int i = 0; i < rows; i++)
+    {
+        int rowScore = 0;
+        int consecutiveCount = 1;
+        int previousSymbolIndex = -1;
+
+        for (int j = 0; j < columns; j++)
+        {
+            var currentSquare = gridSquares[i * columns + j].GetComponent<GridSquare>();
+
+            if (currentSquare.symbolPut)
+            {
+                if (currentSquare.symbolIndex == previousSymbolIndex)
+                {
+                    consecutiveCount++;
+                }
+                else
+                {
+                    if (consecutiveCount >= 2)
+                    {
+                        rowScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                    }
+                    consecutiveCount = 1;
+                }
+
+                previousSymbolIndex = currentSquare.symbolIndex;
+            }
+        }
+
+        if (consecutiveCount >= 2)
+        {
+            rowScore += GetScoreFromConsecutiveCount(consecutiveCount);
+        }
+
+        totalScore += rowScore;
+    }
+
+    // Sprawdź kolumnę
+    for (int j = 0; j < columns; j++)
+    {
+        int columnScore = 0;
+        int consecutiveCount = 1;
+        int previousSymbolIndex = -1;
+
+        for (int i = 0; i < rows; i++)
+        {
+            var currentSquare = gridSquares[i * columns + j].GetComponent<GridSquare>();
+
+            if (currentSquare.symbolPut)
+            {
+                if (currentSquare.symbolIndex == previousSymbolIndex)
+                {
+                    consecutiveCount++;
+                }
+                else
+                {
+                    if (consecutiveCount >= 2)
+                    {
+                        columnScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                    }
+                    consecutiveCount = 1;
+                }
+
+                previousSymbolIndex = currentSquare.symbolIndex;
+            }
+        }
+
+        if (consecutiveCount >= 2)
+        {
+            columnScore += GetScoreFromConsecutiveCount(consecutiveCount);
+        }
+
+        totalScore += columnScore;
+    }
+
+    return totalScore;
+}
+
+private int GetScoreFromConsecutiveCount(int count)
+{
+    if (count == 2)
+    {
+        return 2;
+    }
+    else if (count == 3)
+    {
+        return 3;
+    }
+    else if (count == 4)
+    {
+        return 8;
+    }
+    else if (count >= 5)
+    {
+        return 10;
+    }
+    else
+    {
+        return 0; // niepoprawna liczba
+    }
+}
+
 
 }

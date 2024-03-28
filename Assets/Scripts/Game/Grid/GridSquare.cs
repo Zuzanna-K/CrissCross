@@ -21,6 +21,10 @@ public class GridSquare : MonoBehaviour
 
     public bool symbolPut;
 
+    public int symbolIndex = -1;
+
+    private int indx = -1;
+
     public ShapeSquare collidingShapeSquare;
 
     public ShapeSquare GetCollidingShapeSquare()
@@ -90,6 +94,7 @@ public class GridSquare : MonoBehaviour
             hooverImage.gameObject.SetActive(true);
             Image symbol = collision.GetComponent<ShapeSquare>().symbolImage;
             symbolImage.sprite = symbol.sprite;
+            indx = collision.GetComponent<ShapeSquare>().symbolIndex;
         }
         else if(collision.GetComponent<ShapeSquare>() != null)
         {
@@ -111,6 +116,7 @@ public class GridSquare : MonoBehaviour
 
             symbolImage.gameObject.SetActive(true);
             symbolPut = true;
+            symbolIndex = indx;
           // collidingShapeSquare = collision.GetComponent<ShapeSquare>();
             collision.GetComponent<ShapeSquare>().UnsetOccupied();
 
