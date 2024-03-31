@@ -380,6 +380,11 @@ public void CreateShape(ShapeData shapeData)
     private void RotateShape()
     {
         // Obracaj kształt o 90 stopni w prawo
-        transformed.Rotate(Vector3.forward, -90f);
+        transformed.Rotate(Vector3.forward, -90f); //obrót kafelka
+
+          foreach (var square in currentShape) // obrót symboli
+            {
+                square.GetComponent<ShapeSquare>().symbolImage.GetComponent<RectTransform>().Rotate(Vector3.forward, 90f);
+            }
     }
 }

@@ -135,6 +135,49 @@ private void CheckIfShapeCanBePlaced()
         }
 
 
+    //     var shapeLeft = 0;
+
+    //     foreach (var shape in shapeStorage.shapeList)
+    //     {
+    //         if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
+    //         {
+    //             shapeLeft++;
+    //         }
+    //     }
+        
+    //     // if (shapeLeft == 0 && ConditionToEnd())
+    //     // {
+    //     //     EndOfGame();
+    //     // }
+        
+    //     if (shapeLeft == 0)
+    //     {
+    //         GameEvents.RequestNewShape();
+    //     }
+    //     else
+    //     {
+             GameEvents.SetShapeInactive();
+
+             if(!ConditionToEnd())
+             {
+                LoadNewShape();
+             }
+    //     }
+     }
+    else // cant place shape on the board
+    {
+        GameEvents.MoveShapeToStartPosition();
+    }
+
+   // LoadNewShape();
+}
+
+
+
+
+private void LoadNewShape()
+{
+    
         var shapeLeft = 0;
 
         foreach (var shape in shapeStorage.shapeList)
@@ -145,28 +188,15 @@ private void CheckIfShapeCanBePlaced()
             }
         }
         
-        // if (shapeLeft == 0 && ConditionToEnd())
-        // {
-        //     EndOfGame();
-        // }
-        
         if (shapeLeft == 0)
         {
             GameEvents.RequestNewShape();
         }
-        else
-        {
-            GameEvents.SetShapeInactive();
-        }
-    }
-    else // cant place shape on the board
-    {
-        GameEvents.MoveShapeToStartPosition();
+ 
     }
 
-   // EndOfGame();
 
-}
+
 
 private void EndOfGame()
 {
