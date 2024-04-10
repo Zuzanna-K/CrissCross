@@ -19,6 +19,7 @@ public class MyGrid : MonoBehaviour
     public float everySquareOffset = 0.0f;
 
     public Text finalScore;
+    
 
     private Vector2 offset =new(0.0f,0.0f);
     private List<GameObject> gridSquares = new();
