@@ -252,7 +252,7 @@ private int scoring()
     {
         int rowScore = 0;
         int consecutiveCount = 1;
-        int previousSymbolIndex = -1;
+        int previousSymbolIndex = -2;
 
         for (int j = 0; j < columns; j++)
         {
@@ -278,7 +278,7 @@ private int scoring()
             
             else // kafelek bez symbolu
             {
-                previousSymbolIndex = -1;
+                previousSymbolIndex = -2;
                 consecutiveCount = 1;
             }
         }
@@ -289,8 +289,10 @@ private int scoring()
         }
 
         
+
+        
         totalScore += rowScore;
-        rowsColsScores[i].text = rowScore.ToString();
+       // rowsColsScores[i].text = rowScore.ToString();
         //scoresRowsColumns.Add(rowScore);
     }
 
@@ -299,7 +301,7 @@ private int scoring()
     {
         int columnScore = 0;
         int consecutiveCount = 1;
-        int previousSymbolIndex = -1;
+        int previousSymbolIndex = -2;
 
         for (int i = 0; i < rows; i++)
         {
@@ -324,7 +326,7 @@ private int scoring()
             }
             else // kafelek bez symbolu
             {
-                previousSymbolIndex = -1;
+                previousSymbolIndex = -2;
                 consecutiveCount = 1;
             }
         }
@@ -335,7 +337,7 @@ private int scoring()
         }
        
         totalScore += columnScore;
-        rowsColsScores[rows + j].text = columnScore.ToString();
+       // rowsColsScores[rows + j].text = columnScore.ToString();
         //scoresRowsColumns.Add(columnScore);
     }
 
