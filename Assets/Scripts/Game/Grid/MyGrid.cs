@@ -278,6 +278,11 @@ private int scoring()
             
             else // kafelek bez symbolu
             {
+                if (consecutiveCount >= 2)
+                {
+                   rowScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                  Debug.Log("koniec liczenia: w kolumnie: " + j + " w wierszu: " + i + " symboli z rzędu: " + consecutiveCount);
+                }
                 previousSymbolIndex = -2;
                 consecutiveCount = 1;
             }
@@ -312,12 +317,14 @@ private int scoring()
                 if (currentSquare.symbolIndex == previousSymbolIndex)
                 {
                     consecutiveCount++;
+                    //Debug.Log("symbol z rzędu: "+consecutiveCount + " w kolumnie: " + j + " w wierszu: " + i);
                 }
                 else
                 {
                     if (consecutiveCount >= 2)
                     {
                         columnScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                        Debug.Log("koniec liczenia: w kolumnie: " + j + " w wierszu: " + i + " symboli z rzędu: " + consecutiveCount);
                     }
                     consecutiveCount = 1;
                 }
@@ -326,6 +333,11 @@ private int scoring()
             }
             else // kafelek bez symbolu
             {
+              if (consecutiveCount >= 2)
+                {
+                   columnScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                  Debug.Log("koniec liczenia: w kolumnie: " + j + " w wierszu: " + i + " symboli z rzędu: " + consecutiveCount);
+                }
                 previousSymbolIndex = -2;
                 consecutiveCount = 1;
             }
@@ -334,6 +346,7 @@ private int scoring()
         if (consecutiveCount >= 2)
         {
             columnScore += GetScoreFromConsecutiveCount(consecutiveCount);
+            Debug.Log("Drugi - ewentualny koniec liczenia: w kolumnie: " + j  + " symboli z rzędu: " + consecutiveCount);
         }
        
         totalScore += columnScore;
