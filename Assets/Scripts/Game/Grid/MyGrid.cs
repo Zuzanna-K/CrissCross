@@ -292,7 +292,7 @@ private int scoring()
 
         
         totalScore += rowScore;
-       // rowsColsScores[i].text = rowScore.ToString();
+        rowsColsScores[i].text = rowScore.ToString();
         //scoresRowsColumns.Add(rowScore);
     }
 
@@ -337,7 +337,7 @@ private int scoring()
         }
        
         totalScore += columnScore;
-       // rowsColsScores[rows + j].text = columnScore.ToString();
+        rowsColsScores[rows + j].text = columnScore.ToString();
         //scoresRowsColumns.Add(columnScore);
     }
 

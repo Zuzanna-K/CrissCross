@@ -1576,16 +1576,16 @@ MonoBehaviour:
   everySquareOffset: 0
   finalScore: {fileID: 1937853972}
   rowsColsScores:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 187741468}
+  - {fileID: 867232205}
+  - {fileID: 1388333043}
+  - {fileID: 1386783598}
+  - {fileID: 532164753}
+  - {fileID: 567848395}
+  - {fileID: 611659076}
+  - {fileID: 1964806817}
+  - {fileID: 1868618874}
+  - {fileID: 1317626923}
 --- !u!1 &1868618872
 GameObject:
   m_ObjectHideFlags: 0
