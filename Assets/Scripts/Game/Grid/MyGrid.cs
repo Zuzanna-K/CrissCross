@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
+using System.Linq;
 
 public class MyGrid : MonoBehaviour
 {
@@ -19,10 +20,13 @@ public class MyGrid : MonoBehaviour
     public float everySquareOffset = 0.0f;
 
     public Text finalScore;
+    public List <Text> rowsColsScores = new();
     
 
     private Vector2 offset =new(0.0f,0.0f);
     private List<GameObject> gridSquares = new();
+
+    private List<int>scoresRowsColumns = new();
 
     private void OnEnable()
     {
@@ -206,6 +210,7 @@ private void EndOfGame()
 
         //SceneManager.LoadScene("Game");
         finalScore.text = "    Final Score: "+ scoring().ToString();
+        //DisplayRowColScores();
     }
     else return;
 }
@@ -270,6 +275,12 @@ private int scoring()
 
                 previousSymbolIndex = currentSquare.symbolIndex;
             }
+            
+            else // kafelek bez symbolu
+            {
+                previousSymbolIndex = -1;
+                consecutiveCount = 1;
+            }
         }
 
         if (consecutiveCount >= 2)
@@ -277,7 +288,10 @@ private int scoring()
             rowScore += GetScoreFromConsecutiveCount(consecutiveCount);
         }
 
+        
         totalScore += rowScore;
+        rowsColsScores[i].text = rowScore.ToString();
+        //scoresRowsColumns.Add(rowScore);
     }
 
     // Sprawdź kolumnę
@@ -308,14 +322,21 @@ private int scoring()
 
                 previousSymbolIndex = currentSquare.symbolIndex;
             }
+            else // kafelek bez symbolu
+            {
+                previousSymbolIndex = -1;
+                consecutiveCount = 1;
+            }
         }
 
         if (consecutiveCount >= 2)
         {
             columnScore += GetScoreFromConsecutiveCount(consecutiveCount);
         }
-
+       
         totalScore += columnScore;
+        rowsColsScores[rows + j].text = columnScore.ToString();
+        //scoresRowsColumns.Add(columnScore);
     }
 
     return totalScore;
@@ -342,6 +363,14 @@ private int GetScoreFromConsecutiveCount(int count)
     else
     {
         return 0; // niepoprawna liczba
+    }
+}
+
+private void DisplayRowColScores()
+{
+    for(int i = 0 ; i < rowsColsScores.Count ; i++)
+    {
+        rowsColsScores[i].text =scoresRowsColumns[i].ToString();
     }
 }
 
