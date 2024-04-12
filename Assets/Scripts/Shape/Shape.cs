@@ -27,6 +27,8 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
 
     private bool shapeActive = true;
 
+    private Quaternion startRotation; // do zapisania rotacji
+
     public void Awake()
     {
         shapeStartScale = this.GetComponent<RectTransform>().localScale; // poczatkowa skala obiektu
@@ -105,6 +107,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     {
         //GameEvents.EndOfGame();
         transformed.localPosition = startPosition;
+         transformed.rotation = Quaternion.identity;
         CreateShape(shapeData);
         ReloadShapeSymbols(); // Dodaj to, aby ponownie losować symbole dla nowego kształtu
 
@@ -123,6 +126,13 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
                 }
             }
         }
+
+            foreach (var square in currentShape) // Obrót symboli tak, aby pasowały do obrotu kafelka
+                {
+                    var symbolTransform = square.GetComponent<ShapeSquare>().symbolImage.GetComponent<RectTransform>();
+                  // Ustaw rotację symbolu
+                    symbolTransform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                }
     }
 
 
@@ -336,6 +346,7 @@ public void CreateShape(ShapeData shapeData)
 
      public void OnBeginDrag(PointerEventData eventData)
      {
+        startRotation = transformed.rotation;
         this.GetComponent<RectTransform>().localScale = shapeSelectedScale;
      }
       public void OnDrag(PointerEventData eventData)
@@ -353,9 +364,24 @@ public void CreateShape(ShapeData shapeData)
 
     public void OnEndDrag(PointerEventData eventData)
     {
+       transformed.rotation = startRotation;
        this.GetComponent<RectTransform>().localScale = shapeStartScale;
-       GameEvents.CheckIfShapeCanBePlaced();
 
+     foreach (var square in currentShape) // Obrót symboli tak, aby pasowały do obrotu kafelka
+    {
+        var symbolTransform = square.GetComponent<ShapeSquare>().symbolImage.GetComponent<RectTransform>();
+
+        // Pobierz kąt rotacji kafelka wzdłuż osi Z
+        float tileZRotation = startRotation.eulerAngles.z;
+
+        // Oblicz nowy kąt rotacji symbolu, przeciwny do rotacji kafelka wzdłuż osi Z
+        float symbolZRotation = -tileZRotation;
+
+        // Ustaw rotację symbolu
+        symbolTransform.localRotation = Quaternion.Euler(0f, 0f, symbolZRotation);
+    }
+       GameEvents.CheckIfShapeCanBePlaced();
+     
     }
 
     public void OnPointerDown(PointerEventData eventData)

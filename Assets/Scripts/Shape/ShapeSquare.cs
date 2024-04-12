@@ -65,6 +65,7 @@ public void ReloadSymbol()
         symbolIndex = randomIndex;
         // Pokazanie symbolImage
         symbolImage.gameObject.SetActive(true);
+        //symbolImage.GetComponent<RectTransform>().Rotate(Vector3.forward, 90f);
     }
 }
 
