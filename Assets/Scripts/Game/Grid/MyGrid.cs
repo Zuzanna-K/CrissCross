@@ -19,6 +19,8 @@ public class MyGrid : MonoBehaviour
     public float squareScale = 0.5f;
     public float everySquareOffset = 0.0f;
 
+     public List<Sprite> symbols; 
+
     public Text finalScore;
     public List <Text> rowsColsScores = new();
     
@@ -85,6 +87,16 @@ public class MyGrid : MonoBehaviour
 
         foreach(GameObject square in gridSquares)
         {
+            if(rowNumber == 0 && columnNumber == 0)
+            {
+                var gridSquare = square.GetComponent<GridSquare>();
+                    // Losowanie indeksu symbolu i ustawienie go w occupiedImage
+                int randomIndex = Random.Range(0, symbols.Count);
+                gridSquare.symbolImage.sprite = symbols[randomIndex];
+                gridSquare.symbolIndex = randomIndex;
+                gridSquare.symbolImage.gameObject.SetActive(true);
+                gridSquare.activeImage.gameObject.SetActive(true);
+            }
             if (columnNumber +1 > columns)
             {
                 columnNumber = 0;
@@ -102,6 +114,8 @@ public class MyGrid : MonoBehaviour
             startPosition.y - positionYOffset, 0.0f);
 
             columnNumber++;
+
+    
         }
     }
 
@@ -209,7 +223,7 @@ private void EndOfGame()
     {
 
         //SceneManager.LoadScene("Game");
-        finalScore.text = "    Final Score: "+ scoring().ToString();
+        finalScore.text = "Wynik: "+ scoring().ToString();
         //DisplayRowColScores();
     }
     else return;
