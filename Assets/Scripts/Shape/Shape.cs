@@ -21,7 +21,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     public List<GameObject> currentShape = new List<GameObject>();
     private Vector3 shapeStartScale;
     private RectTransform transformed;
-    private bool shapeDraggable = true;
     private Canvas canvas;
     private Vector3 startPosition;
 
@@ -34,7 +33,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         shapeStartScale = this.GetComponent<RectTransform>().localScale; // poczatkowa skala obiektu
         transformed = this.GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
-        shapeDraggable = true;
         startPosition = transformed.localPosition;
         shapeActive = true;
     }
@@ -109,7 +107,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         transformed.localPosition = startPosition;
          transformed.rotation = Quaternion.identity;
         CreateShape(shapeData);
-        ReloadShapeSymbols(); // Dodaj to, aby ponownie losować symbole dla nowego kształtu
+        ReloadShapeSymbols(); 
 
     }
 

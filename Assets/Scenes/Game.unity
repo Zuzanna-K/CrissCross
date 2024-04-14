@@ -1279,8 +1279,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shapeData:
   - {fileID: 11400000, guid: 95e650e41d60684439ee9301075da51d, type: 2}
-  shapeList:
-  - {fileID: 864851136}
+  currentShape: {fileID: 864851136}
 --- !u!1 &1317626921
 GameObject:
   m_ObjectHideFlags: 0

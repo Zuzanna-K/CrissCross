@@ -69,7 +69,6 @@ public class MyGrid : MonoBehaviour
                 gridSquares[gridSquares.Count-1].transform.SetParent(this.transform); // kafelek zaczyna być dzieckiem obiektu do którego przypiszemy ten skrypt
                 gridSquares[gridSquares.Count-1].transform.localScale = new Vector3(squareScale,squareScale,squareScale);
 
-                gridSquares[gridSquares.Count-1].GetComponent<GridSquare>().SetImage(squareIndex%2 == 0);
                 squareIndex++;
             }
         }
@@ -146,35 +145,9 @@ private void CheckIfShapeCanBePlaced()
         {
             var gridSquare = gridSquares[squareIndexes[i]].GetComponent<GridSquare>();
             gridSquare.PlaceSquareOnTheBoard();
-            //symbolsToAdd.Add(currentSelectedShape.currentShape[i].GetComponent<ShapeSquare>().symbolImage.sprite);
-           // gridSquare.SetSymbol(gridSquare.GetCollidingShapeSquare().symbolImage.sprite);
-            
-           // gridSquare.SetSymbol(currentSelectedShape.currentShape[i].GetComponent<ShapeSquare>().symbolImage.sprite);
-
         }
 
-
-    //     var shapeLeft = 0;
-
-    //     foreach (var shape in shapeStorage.shapeList)
-    //     {
-    //         if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
-    //         {
-    //             shapeLeft++;
-    //         }
-    //     }
-        
-    //     // if (shapeLeft == 0 && ConditionToEnd())
-    //     // {
-    //     //     EndOfGame();
-    //     // }
-        
-    //     if (shapeLeft == 0)
-    //     {
-    //         GameEvents.RequestNewShape();
-    //     }
-    //     else
-    //     {
+ 
              GameEvents.SetShapeInactive();
 
              if(!ConditionToEnd())
@@ -197,17 +170,18 @@ private void CheckIfShapeCanBePlaced()
 private void LoadNewShape()
 {
     
-        var shapeLeft = 0;
+        //var shapeLeft = 0;
 
-        foreach (var shape in shapeStorage.shapeList)
-        {
-            if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
-            {
-                shapeLeft++;
-            }
-        }
+        // foreach (var shape in shapeStorage.shapeList)
+        // {
+        //     if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
+        //     {
+        //         shapeLeft++;
+        //     }
+        // }
+
+        if(!shapeStorage.currentShape.IsOnStartPosition()&& !shapeStorage.currentShape.IsAnyOfShapeSquareActive())
         
-        if (shapeLeft == 0)
         {
             GameEvents.RequestNewShape();
         }
@@ -309,7 +283,10 @@ private int scoring()
 
         
 
-        
+        if(GameManager.instance.selectedDifficulty == 1 && rowScore == 0) // punktacja dla trybu zaawansowanego
+        {
+            rowScore = -5;
+        }
         totalScore += rowScore;
         rowsColsScores[i].text = rowScore.ToString();
         //scoresRowsColumns.Add(rowScore);
@@ -363,6 +340,10 @@ private int scoring()
             Debug.Log("Drugi - ewentualny koniec liczenia: w kolumnie: " + j  + " symboli z rzędu: " + consecutiveCount);
         }
        
+        if(GameManager.instance.selectedDifficulty == 1 && columnScore == 0) // punktacja dla trybu zaawansowanego
+        {
+            columnScore = -5;
+        }
         totalScore += columnScore;
         rowsColsScores[rows + j].text = columnScore.ToString();
         //scoresRowsColumns.Add(columnScore);

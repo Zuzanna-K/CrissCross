@@ -13,7 +13,6 @@ public class GridSquare : MonoBehaviour
 
     public Image symbolImage;
 
-    public List<Sprite> normalImages;
 
     public bool selected; // czy wchodzimy z tym kwadratem w kolizję(najeżdżamy na niego kafelkiem)
     public int squareIndex;
@@ -45,11 +44,11 @@ public class GridSquare : MonoBehaviour
         symbolPut = true;
        }
     }
-//temp
-    public bool CanWeUseThisSquare()
-    {
-        return hooverImage.gameObject.activeSelf;
-    }
+
+    // public bool CanWeUseThisSquare()
+    // {
+    //     return hooverImage.gameObject.activeSelf;
+    // }
 
     public void PlaceSquareOnTheBoard()
     {
@@ -73,11 +72,7 @@ public class GridSquare : MonoBehaviour
         symbolImage.sprite = symbolSprite;
         symbolImage.gameObject.SetActive(true);
     }
-
-    public void SetImage(bool setFirstImage)
-    {
-        normalImage.GetComponent<Image>().sprite = setFirstImage ? normalImages[1] : normalImages[0];
-    }    
+  
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(squareOccupied == false)
