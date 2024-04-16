@@ -39,6 +39,7 @@ public class GridSquare : MonoBehaviour
 
        if(squareIndex ==0)
        {
+        indx = symbolIndex;
         selected = true;
         squareOccupied = true; 
         symbolPut = true;

@@ -390,15 +390,7 @@ public void CreateShape(ShapeData shapeData)
 
     private void MoveShapeToStartPosition()
     {
-    
-        //MOJE
-        // transformed.pivot = new Vector2(0.5f, 0.5f);
-        // transformed.anchorMin = new Vector2(0.5f, 0.5f);
-        // transformed.anchorMax = new Vector2(0.5f, 0.5f);
-        // KONIEC MOJEGO
-
             transformed.transform.localPosition = startPosition;
-        //transformed.transform.localScale = shapeStartScale;
     }
 
     private void RotateShape()

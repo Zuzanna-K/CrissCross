@@ -11,8 +11,8 @@ using System.Linq;
 public class MyGrid : MonoBehaviour
 {
     public ShapeStorage shapeStorage;
-    public int columns = 0;
-    public int rows = 0;
+    private int columns = 5;
+    private int rows = 5;
     public float squaresGap = 0.0f;
     public GameObject gridSquare;
     public Vector2 startPosition = new (0.0f,0.0f);
@@ -347,6 +347,67 @@ private int scoring()
         totalScore += columnScore;
         rowsColsScores[rows + j].text = columnScore.ToString();
         //scoresRowsColumns.Add(columnScore);
+    }
+
+    if (GameManager.instance.selectedDifficulty == 1) // punkty przekatnej prawy gorny rog - lewy dolny rog
+    {
+        int diameterScore = 0;
+        int consecutiveCount = 1;
+        int previousSymbolIndex = -2;
+ 
+        for (int i = 0; i < rows; i++)
+        {
+         
+            var currentSquare = gridSquares[(i+1)*(rows -1)].GetComponent<GridSquare>();
+
+            if (currentSquare.symbolPut)
+            {
+                if (currentSquare.symbolIndex == previousSymbolIndex)
+                {
+                    consecutiveCount++;
+                    //Debug.Log("symbol z rzędu: "+consecutiveCount + " w kolumnie: " + j + " w wierszu: " + i);
+                }
+                else
+                {
+                    if (consecutiveCount >= 2)
+                    {
+                        diameterScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                        Debug.Log("koniec liczenia: po przekatnej w wierszu: " + i + " symboli z rzędu: " + consecutiveCount);
+                    }
+                    consecutiveCount = 1;
+                }
+
+                previousSymbolIndex = currentSquare.symbolIndex;
+            }
+
+            else // kafelek bez symbolu
+            {
+              if (consecutiveCount >= 2)
+                {
+                  diameterScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                  Debug.Log("koniec liczenia: po przekatnej w wierszu: " + i + " symboli z rzędu: " + consecutiveCount);
+                }
+                previousSymbolIndex = -2;
+                consecutiveCount = 1;
+            }
+
+        }
+
+        if (consecutiveCount >= 2)
+        {
+            diameterScore += GetScoreFromConsecutiveCount(consecutiveCount);
+            Debug.Log("Drugi - ewentualny koniec liczenia po przekatnej symboli z rzędu: " + consecutiveCount);
+        }
+
+        if(diameterScore == 0)
+        {
+            diameterScore = -5;
+        }
+
+
+        rowsColsScores[rows + columns].text = diameterScore.ToString();
+        rowsColsScores[rows + columns +1].text = diameterScore.ToString();
+        totalScore += 2*diameterScore;
     }
 
     return totalScore;
