@@ -10,10 +10,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     public Vector3 shapeSelectedScale; // lezacy kafelek jest troszeczke mniejszy od podnoszonego
     public Vector2 offset = new Vector2(0f,700f);
 
-
-    [HideInInspector]
-    public ShapeData currentShapeData;
-
     public int TotalSquareNumber{get;set;}
 
     public List<GameObject> currentShape = new List<GameObject>();
@@ -99,12 +95,12 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         shapeActive = true;
     }
 
-    public void RequestNewShape(ShapeData shapeData)
+    public void RequestNewShape()
     {
         //GameEvents.EndOfGame();
         transformed.localPosition = startPosition;
          transformed.rotation = Quaternion.identity;
-        CreateShape(shapeData);
+        CreateShape();
         ReloadShapeSymbols(); 
 
     }
@@ -132,181 +128,25 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     }
 
 
-public void CreateShape(ShapeData shapeData)
+public void CreateShape()
 {
 
-    currentShapeData = shapeData;
-    TotalSquareNumber = GetNumberOfSquares(shapeData);
+    currentShape.Clear(); 
+//lewy
+    GameObject leftSquare = Instantiate(squareShapeImage, transform);
+    leftSquare.SetActive(true);
+    leftSquare.GetComponent<RectTransform>().localPosition = new Vector2(-squareShapeImage.GetComponent<RectTransform>().rect.width/2, 0);
+    currentShape.Add(leftSquare);
 
-    while (currentShape.Count < TotalSquareNumber)
-    {
-        GameObject newSquare = Instantiate(squareShapeImage, transform) as GameObject;
-        newSquare.gameObject.transform.position = Vector3.zero;
-        newSquare.gameObject.SetActive(false);
+ //prawy
+    GameObject rightSquare = Instantiate(squareShapeImage, transform);
+    rightSquare.SetActive(true);
+    rightSquare.GetComponent<RectTransform>().localPosition = new Vector2(squareShapeImage.GetComponent<RectTransform>().rect.width/2, 0);
+    currentShape.Add(rightSquare);
 
-        currentShape.Add(newSquare);
-    }
-
-    var squareRect = squareShapeImage.GetComponent<RectTransform>();
-    var moveDistance = new Vector2(squareRect.rect.width * squareRect.localScale.x,
-        squareRect.rect.height * squareRect.localScale.y);
-
-    int currentIndexInist = 0;
-
-    for (var row = 0; row < shapeData.rows; row++)
-    {
-        for (var column = 0; column < shapeData.columns; column++)
-        {
-            if (shapeData.board[row].column[column]) // aktywny kwadracik
-            {
-                currentShape[currentIndexInist].SetActive(true);
-                currentShape[currentIndexInist].GetComponent<RectTransform>().localPosition =
-                    new Vector2(GetXPositionForShapeSquare(shapeData, column, moveDistance),
-                        GetYPositionForShapeSquare(shapeData, row, moveDistance));
-
-                // Losowanie indeksu symbolu i ustawienie go w occupiedImage
-                ShapeSquare shapeSquare = currentShape[currentIndexInist].GetComponent<ShapeSquare>();
-                int randomIndex = Random.Range(0, shapeSquare.symbols.Count);
-                shapeSquare.symbolImage.sprite = shapeSquare.symbols[randomIndex];
-
-                currentIndexInist++;
-            }
-        }
-    }
+    TotalSquareNumber = currentShape.Count;
+    ReloadShapeSymbols();
 }
-
-
-    private float GetYPositionForShapeSquare(ShapeData shapeData, int row, Vector2 moveDistance)
-    {
-        float shiftOnY = 0f;
-
-         if (shapeData.rows > 1)
-        {
-            if(shapeData.rows % 2 != 0) 
-            {
-                var middleSquareIndex = (shapeData.rows-1)/2;
-                var multiplier = (shapeData.rows-1)/2;
-
-                if (row < middleSquareIndex)
-                {
-                    shiftOnY = moveDistance.y * 1;
-                    shiftOnY*= multiplier;
-                }
-                else if (row>middleSquareIndex)
-                {
-                     shiftOnY = moveDistance.y * -1;
-                     shiftOnY *= multiplier;
-                }
-            }
-
-            else
-            {
-                var middleSquareIndex2 = (shapeData.rows ==2) ? 1 : (shapeData.rows / 2);
-                var middleSquareIndex1 = (shapeData.rows ==2) ? 0 : shapeData.rows - 1;
-                var multiplier = shapeData.rows /2;
-
-                if (row == middleSquareIndex1 || row == middleSquareIndex2)
-                {
-                    if(row == middleSquareIndex1)
-                        shiftOnY = moveDistance.y / 2;
-                    if (row == middleSquareIndex2)
-                        shiftOnY = (moveDistance.y / 2) * -1;
-                }
-
-                if(row < middleSquareIndex1 && row < middleSquareIndex2)
-                {
-                    shiftOnY = moveDistance.y * 1;
-                    shiftOnY *= multiplier;
-                }
-                else if(row > middleSquareIndex1 && row > middleSquareIndex2)
-                {
-                    shiftOnY = moveDistance.y * -1;
-                    shiftOnY *= multiplier;
-
-                }
-            }
-
-        }
-
-        return shiftOnY;
-
-        
-    }
-
-    private float GetXPositionForShapeSquare(ShapeData shapeData, int column, Vector2 moveDistance)
-    {
-
-        float shiftOnX = 0f;
-
-        if (shapeData.columns > 1)
-        {
-            if(shapeData.columns % 2 != 0) // nieparzysta ilosc kolumn
-            {
-                var middleSquareIndex = (shapeData.columns-1)/2;
-                var multiplier = (shapeData.columns-1)/2;
-
-                if (column<middleSquareIndex)
-                {
-                    shiftOnX = moveDistance.x * -1;
-                    shiftOnX*= multiplier;
-                }
-                else if (column>middleSquareIndex)
-                {
-                     shiftOnX = moveDistance.x * 1;
-                     shiftOnX *= multiplier;
-                }
-            }
-
-            else
-            {
-                var middleSquareIndex2 = (shapeData.columns ==2) ? 1 : (shapeData.columns / 2);
-                var middleSquareIndex1 = (shapeData.columns ==2) ? 0 : shapeData.columns - 1;
-                var multiplier = shapeData.columns /2;
-
-                if (column == middleSquareIndex1 || column == middleSquareIndex2)
-                {
-                    if(column == middleSquareIndex2)
-                        shiftOnX = moveDistance.x / 2;
-                    if (column == middleSquareIndex1)
-                        shiftOnX = (moveDistance.x / 2) * -1;
-                }
-
-                if(column < middleSquareIndex1 && column < middleSquareIndex2)
-                {
-                    shiftOnX = moveDistance.x * -1;
-                    shiftOnX *= multiplier;
-                }
-                else if(column > middleSquareIndex1 && column > middleSquareIndex2)
-                {
-                    shiftOnX = moveDistance.x * 1;
-                    shiftOnX *= multiplier;
-
-                }
-            }
-
-        }
-
-        return shiftOnX;
-
-    }
-
-    private int GetNumberOfSquares(ShapeData shapeData) // zwroci ilosc aktywnych kwadratów z kształtu
-    {
-        int number = 0;
-
-        foreach (var rowData in shapeData.board)
-        {
-            foreach(var active in rowData.column)
-            {
-                if(active)
-                {
-                    number++;
-                }
-            }
-        }
-
-        return number;
-    }
 
     public List<Sprite> GetShapeSymbols()
     {

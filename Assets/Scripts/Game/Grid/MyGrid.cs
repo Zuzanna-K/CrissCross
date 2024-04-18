@@ -48,7 +48,7 @@ public class MyGrid : MonoBehaviour
         CreateGrid();
     }
 
-    private void CreateGrid()
+    public void CreateGrid()
     {
         SpawnGridSquares();
         SetGridSquaresPositions();
@@ -444,6 +444,25 @@ private void DisplayRowColScores()
         rowsColsScores[i].text =scoresRowsColumns[i].ToString();
     }
 }
+
+
+// do testow
+
+    public void setGridSquares(List<GameObject>GridSquares)
+    {
+        this.gridSquares = GridSquares;
+    }
+
+   public List<GameObject> GridSquares
+    {
+        get { return gridSquares; }
+    }
+
+
+    public int scoretotest()
+    {
+        return scoring();
+    }
 
 
 }

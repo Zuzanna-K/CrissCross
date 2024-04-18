@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ShapeStorage : MonoBehaviour
 {
-    public List<ShapeData> shapeData;
-   // public List<Shape> shapeList;
-
-    public Shape currentShape;
+       public Shape currentShape;
 
     private void OnEnable()
     {
@@ -21,13 +18,10 @@ public class ShapeStorage : MonoBehaviour
 
     void Start()
     {
-        // foreach(var shape in shapeList)
-        // {
-        //     var shapeIndex = UnityEngine.Random.Range(0,shapeData.Count);
-        //     shape.CreateShape(shapeData[shapeIndex]);
-        // }
 
-        currentShape.CreateShape(shapeData[0]);
+      //  currentShape.CreateShape(shapeData[0]);
+
+      currentShape.CreateShape();
     }
 
 
@@ -41,7 +35,7 @@ public class ShapeStorage : MonoBehaviour
 
     private void RequestNewShape()
     {
-        currentShape.RequestNewShape(shapeData[0]);
+        currentShape.RequestNewShape();
     }
 
 
