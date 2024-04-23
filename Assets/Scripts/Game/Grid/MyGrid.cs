@@ -1,23 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
-using System.Linq;
+
 
 public class MyGrid : MonoBehaviour
 {
     public ShapeStorage shapeStorage;
-    private int columns = 5;
-    private int rows = 5;
-    public float squaresGap = 0.0f;
+
     public GameObject gridSquare;
     public Vector2 startPosition = new (0.0f,0.0f);
     public float squareScale = 0.5f;
-    public float everySquareOffset = 0.0f;
 
      public List<Sprite> symbols; 
 
@@ -27,10 +19,10 @@ public class MyGrid : MonoBehaviour
 
     private Vector2 offset =new(0.0f,0.0f);
     private List<GameObject> gridSquares = new();
+    private int columns = 5;
+    private int rows = 5;
 
-    private List<int>scoresRowsColumns = new();
-
-    private void OnEnable()
+    private void OnEnable() // subskrybcja metod, pozwala na "komunikację" z innymi obiektami gry
     {
         GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
         GameEvents.EndOfGame += EndOfGame;
@@ -48,14 +40,14 @@ public class MyGrid : MonoBehaviour
         CreateGrid();
     }
 
-    public void CreateGrid()
+    public void CreateGrid() // metoda tworząca planszę - tworzy jej pola i je umiejscawia za pomocą 2 metod
     {
         SpawnGridSquares();
         SetGridSquaresPositions();
 
     }
 
-    private void SpawnGridSquares()
+    private void SpawnGridSquares() // metoda tworząca pola planszy
     {
         int squareIndex = 0;
 
@@ -74,15 +66,15 @@ public class MyGrid : MonoBehaviour
         }
     }
 
-    private void SetGridSquaresPositions()
+    private void SetGridSquaresPositions() // metoda umieszczająca pola planszy
     {
-        int columnNumber = 0; //numer kolumny w ktoreym sie znajdujemy
-        int rowNumber = 0; // nr wiersza 
+        int columnNumber = 0; 
+        int rowNumber = 0; 
 
         var squareRect = gridSquares[0].GetComponent<RectTransform>();
 
-        offset.x = squareRect.rect.width * squareRect.transform.localScale.x + everySquareOffset;
-        offset.y = squareRect.rect.height * squareRect.transform.localScale.y + everySquareOffset;
+        offset.x = squareRect.rect.width * squareRect.transform.localScale.x ;
+        offset.y = squareRect.rect.height * squareRect.transform.localScale.y;
 
         foreach(GameObject square in gridSquares)
         {
@@ -94,7 +86,6 @@ public class MyGrid : MonoBehaviour
                 gridSquare.symbolImage.sprite = symbols[randomIndex];
                 gridSquare.symbolIndex = randomIndex;
                 gridSquare.symbolImage.gameObject.SetActive(true);
-                gridSquare.activeImage.gameObject.SetActive(true);
             }
             if (columnNumber +1 > columns)
             {
@@ -118,10 +109,9 @@ public class MyGrid : MonoBehaviour
         }
     }
 
-private void CheckIfShapeCanBePlaced()
+private void CheckIfShapeCanBePlaced() // metoda sprawdzająca czy gracz może położyć kafelek w wybranym przez siebie miejscu
 {   
     var squareIndexes = new List<int>();
-    var symbolsToAdd = new List<Sprite>(); // Lista symboli do dodania na planszę
 
     foreach (var square in gridSquares)
     {
@@ -131,7 +121,6 @@ private void CheckIfShapeCanBePlaced()
         {
             squareIndexes.Add(gridSquare.squareIndex);
             gridSquare.selected = false;
-            // gridSquare.ActivateSquare();
         }
     }
 
@@ -154,56 +143,41 @@ private void CheckIfShapeCanBePlaced()
              {
                 LoadNewShape();
              }
-    //     }
+  
      }
     else // cant place shape on the board
     {
         GameEvents.MoveShapeToStartPosition();
     }
 
-   // LoadNewShape();
 }
 
 
 
 
-private void LoadNewShape()
+private void LoadNewShape() // metoda tworząca nowy kafelek, który gracz musi dopasować
 {
     
-        //var shapeLeft = 0;
-
-        // foreach (var shape in shapeStorage.shapeList)
-        // {
-        //     if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
-        //     {
-        //         shapeLeft++;
-        //     }
-        // }
-
-        if(!shapeStorage.currentShape.IsOnStartPosition()&& !shapeStorage.currentShape.IsAnyOfShapeSquareActive())
-        
+    if(!shapeStorage.currentShape.IsOnStartPosition()&& !shapeStorage.currentShape.IsAnyOfShapeSquareActive())    
         {
             GameEvents.RequestNewShape();
         }
  
-    }
+}
 
 
 
 
-private void EndOfGame()
+private void EndOfGame() // metoda wywoływana na koniec bieżącej rozgrywki, wyświetlająca punktację końcową
 {
     if (ConditionToEnd() == true)
     {
-
-        //SceneManager.LoadScene("Game");
-        finalScore.text = "Wynik: "+ scoring().ToString();
-        //DisplayRowColScores();
+        finalScore.text = "Wynik: "+ Scoring().ToString();
     }
     else return;
 }
 
-private bool ConditionToEnd()
+private bool ConditionToEnd() // metoda sprawdzająca czy bieżąca rozgrywka powinna się zakończyć
 {
     for (int i = 0; i < rows; i++)
     {
@@ -231,7 +205,7 @@ private bool ConditionToEnd()
     return true; 
 }
 
-private int scoring()
+private int Scoring() // metoda licząca punktację na podstawie aktualnego stanu planszy
 {
     int totalScore = 0;
 
@@ -413,7 +387,7 @@ private int scoring()
     return totalScore;
 }
 
-private int GetScoreFromConsecutiveCount(int count)
+private int GetScoreFromConsecutiveCount(int count) // metoda licząca punkty za jeden zestaw symboli
 {
     if (count == 2)
     {
@@ -433,36 +407,9 @@ private int GetScoreFromConsecutiveCount(int count)
     }
     else
     {
-        return 0; // niepoprawna liczba
+        return 0; 
     }
 }
-
-private void DisplayRowColScores()
-{
-    for(int i = 0 ; i < rowsColsScores.Count ; i++)
-    {
-        rowsColsScores[i].text =scoresRowsColumns[i].ToString();
-    }
-}
-
-
-// do testow
-
-    public void setGridSquares(List<GameObject>GridSquares)
-    {
-        this.gridSquares = GridSquares;
-    }
-
-   public List<GameObject> GridSquares
-    {
-        get { return gridSquares; }
-    }
-
-
-    public int scoretotest()
-    {
-        return scoring();
-    }
 
 
 }

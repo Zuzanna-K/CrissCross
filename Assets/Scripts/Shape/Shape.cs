@@ -1,24 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler,
-    IPointerDownHandler
+public class Shape : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler // klasa reprezentująca kafelek
 {
-    public GameObject squareShapeImage;
-    public Vector3 shapeSelectedScale; // lezacy kafelek jest troszeczke mniejszy od podnoszonego
+    public GameObject squareShapeImage; // prefabrykat pojedynczego kwadratu
+    public Vector3 shapeSelectedScale; // skala podnoszonego kafelka (lezacy kafelek jest troszeczke mniejszy od podnoszonego)
     public Vector2 offset = new Vector2(0f,700f);
 
-    public int TotalSquareNumber{get;set;}
+    public int TotalSquareNumber{get;set;} // ilość kwadratów budujących kafelek
 
-    public List<GameObject> currentShape = new List<GameObject>();
+    public List<GameObject> currentShape = new List<GameObject>(); // lista kwadratów ShapeSquare budujących ten kafelek
     private Vector3 shapeStartScale;
     private RectTransform transformed;
-    private Canvas canvas;
+    private Canvas canvas; // odwołanie do canvasu, w którym znajduje się kafelek
     private Vector3 startPosition;
-
-    private bool shapeActive = true;
 
     private Quaternion startRotation; // do zapisania rotacji
 
@@ -28,7 +24,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         transformed = this.GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         startPosition = transformed.localPosition;
-        shapeActive = true;
     }
 
     private void OnEnable()
@@ -42,12 +37,12 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         GameEvents.SetShapeInactive -= SetShapeInactive;
     }
 
-    public bool IsOnStartPosition()
+    public bool IsOnStartPosition() // sprawdza, czy kafelek znajduje się na początkowej pozycji
     {
         return transformed.localPosition == startPosition;
     }
 
-    public bool IsAnyOfShapeSquareActive()
+    public bool IsAnyOfShapeSquareActive() // metoda sprawdzająca czy kafelek składa się z aktywnych kwadratów
     {
         foreach(var square in currentShape)
         {
@@ -58,21 +53,10 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         return false;
     }
 
-    public void DeactivateShape()
-    {
-        if (shapeActive)
-        {
-            foreach(var square in currentShape)
-            {
-                square?.GetComponent<ShapeSquare>().DeactivateSquare();
-            }
-        }
-        shapeActive = false;
-    }
 
-    private void SetShapeInactive()
+
+    private void SetShapeInactive() // metoda dezaktyująca aktualny kafelek
     {
-           //GameEvents.EndOfGame();
         if(IsOnStartPosition() == false && IsAnyOfShapeSquareActive())
         {
             foreach (var square in currentShape)
@@ -83,29 +67,16 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
   
     }
 
-    public void ActivateShape()
+    public void RequestNewShape() // metoda wywoływana, aby stworzyć nowy kafelek z nowymi symbolami
     {
-        if (!shapeActive)
-        {
-            foreach(var square in currentShape)
-            {
-                square?.GetComponent<ShapeSquare>().ActivateSquare();
-            }
-        }
-        shapeActive = true;
-    }
-
-    public void RequestNewShape()
-    {
-        //GameEvents.EndOfGame();
         transformed.localPosition = startPosition;
-         transformed.rotation = Quaternion.identity;
+        transformed.rotation = Quaternion.identity;
         CreateShape();
         ReloadShapeSymbols(); 
 
     }
 
-    public void ReloadShapeSymbols()
+    public void ReloadShapeSymbols() // metoda losująca nowe symbole kafelka, dostosowuje też obrót symboli
     {
         foreach (var square in currentShape)
         {
@@ -128,7 +99,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     }
 
 
-public void CreateShape()
+public void CreateShape() // metoda tworząca kafelek - prawy i lewy SquareShape budujące go, losuje nowe symbole
 {
 
     currentShape.Clear(); 
@@ -148,48 +119,18 @@ public void CreateShape()
     ReloadShapeSymbols();
 }
 
-    public List<Sprite> GetShapeSymbols()
-    {
-        List<Sprite> symbols = new List<Sprite>();
-
-        foreach (var square in currentShape)
-        {
-            if (square.activeSelf)
-            {
-                ShapeSquare shapeSquare = square.GetComponent<ShapeSquare>();
-                if (shapeSquare != null)
-                {
-                    Image symbolImage = shapeSquare.symbolImage;
-                    if (symbolImage != null)
-                    {
-                        symbols.Add(symbolImage.sprite);
-                    }
-                }
-            }
-        }
-
-        return symbols;
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData) // metoda wywoływana po kliknięciu na kafelek, obracająca go
     {
         RotateShape();
     }
-     public void OnPointerUp(PointerEventData eventData)
-     {
 
-     }
-
-     public void OnBeginDrag(PointerEventData eventData)
+     public void OnBeginDrag(PointerEventData eventData) // metoda wywoływana na początku przeciągania kafelka
      {
         startRotation = transformed.rotation;
         this.GetComponent<RectTransform>().localScale = shapeSelectedScale;
      }
-      public void OnDrag(PointerEventData eventData)
+      public void OnDrag(PointerEventData eventData) // metoda wywoływana podczas przeciągania kafelka, aktualizująca jego pozycję
       {
-        // transformed.anchorMin = new Vector2(0.5f,0.5f);
-        // transformed.anchorMax = new Vector2(0.5f,0.5f);
-        // transformed.pivot = new Vector2(0.5f,0.5f);
 
         Vector2 pos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform,
@@ -198,42 +139,29 @@ public void CreateShape()
         transformed.localPosition = pos + offset;
       }
 
-    public void OnEndDrag(PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)// metoda wywoływana po przeciągnięciu kafelka
     {
        transformed.rotation = startRotation;
        this.GetComponent<RectTransform>().localScale = shapeStartScale;
 
-     foreach (var square in currentShape) // Obrót symboli tak, aby pasowały do obrotu kafelka
-    {
-        var symbolTransform = square.GetComponent<ShapeSquare>().symbolImage.GetComponent<RectTransform>();
-
-        // Pobierz kąt rotacji kafelka wzdłuż osi Z
-        float tileZRotation = startRotation.eulerAngles.z;
-
-        // Oblicz nowy kąt rotacji symbolu, przeciwny do rotacji kafelka wzdłuż osi Z
-        float symbolZRotation = -tileZRotation;
-
-        // Ustaw rotację symbolu
-        symbolTransform.localRotation = Quaternion.Euler(0f, 0f, symbolZRotation);
-    }
-       GameEvents.CheckIfShapeCanBePlaced();
+        foreach (var square in currentShape) // Obrót symboli tak, aby pasowały do obrotu kafelka
+        {
+            var symbolTransform = square.GetComponent<ShapeSquare>().symbolImage.GetComponent<RectTransform>();
+            float tileZRotation = startRotation.eulerAngles.z;
+            float symbolZRotation = -tileZRotation;
+            symbolTransform.localRotation = Quaternion.Euler(0f, 0f, symbolZRotation);
+        }
+        GameEvents.CheckIfShapeCanBePlaced();
      
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    private void MoveShapeToStartPosition() // metoda umieszczająca kafelek na jego pozycję początkową
     {
-    
+        transformed.transform.localPosition = startPosition;
     }
 
-
-    private void MoveShapeToStartPosition()
+    private void RotateShape() // metoda pozwalająca na obrót kafelka
     {
-            transformed.transform.localPosition = startPosition;
-    }
-
-    private void RotateShape()
-    {
-        // Obracaj kształt o 90 stopni w prawo
         transformed.Rotate(Vector3.forward, -90f); //obrót kafelka
 
           foreach (var square in currentShape) // obrót symboli

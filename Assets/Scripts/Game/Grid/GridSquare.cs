@@ -1,43 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridSquare : MonoBehaviour
+public class GridSquare : MonoBehaviour // klasa reprezentująca pole planszy
 {
-    public Image hooverImage;
-    public Image activeImage;
+    public Image hooverImage; // image który jest wyświetlany gdy ShapeSquare wchodzi z nim w kolizję
 
-    public Image normalImage;
-
-    public Image symbolImage;
+    public Image symbolImage; // image który jest wyświetlany gdy gracz umiejscowi na tym polu symbol z kafelka
 
 
     public bool selected; // czy wchodzimy z tym kwadratem w kolizję(najeżdżamy na niego kafelkiem)
-    public int squareIndex;
-    public bool squareOccupied; // czy już jest zajęty przez poprzednie kafelki
+    public int squareIndex; // indeks tego pola, pozwala na identyfikację jego położenia względem innych pól planszy
+    public bool squareOccupied; // zmienna mówiąca czy pole już jest zajęte
 
-    public bool symbolPut;
+    public bool symbolPut; // zmienna określająca czy na tym polu gracz już umiejcowił symbol
 
-    public int symbolIndex = -1;
+    public int symbolIndex = -1; // indeks symbolu (indeks dotyczący listy dostępnych symboli) który jest na kafelku, domyślnie- brak symbolu
 
-    private int indx = -1;
+    private int indx = -1; // zmienna pomocnicza, potrzebna do manipulacji symbolami
 
-    public ShapeSquare collidingShapeSquare;
 
-    public ShapeSquare GetCollidingShapeSquare()
-    {
-        return collidingShapeSquare;
-    }
-
-    void Start()
+    void Start() // metoda wywoływana  na początku istnienia instancji tego obiektu
     {
        selected = false;
        squareOccupied = false; 
        symbolPut = false;
 
-       if(squareIndex ==0)
+       if(squareIndex ==0) // pole w lewym  górnym rogu planszy jest na samym początku rozgrywki zajęte
        {
         indx = symbolIndex;
         selected = true;
@@ -46,35 +34,15 @@ public class GridSquare : MonoBehaviour
        }
     }
 
-    // public bool CanWeUseThisSquare()
-    // {
-    //     return hooverImage.gameObject.activeSelf;
-    // }
 
-    public void PlaceSquareOnTheBoard()
+    public void PlaceSquareOnTheBoard() // metoda wywoływana gdy gracz umieści symbol na tym polu
     {
-        ActivateSquare();
-    }
-
-    public void ActivateSquare()
-    {
-        hooverImage.gameObject.SetActive(false);
-        activeImage.gameObject.SetActive(true);
-        //symbolImage.gameObject.SetActive(true);
-
+        hooverImage.gameObject.SetActive(false);       
         selected = true;
         squareOccupied = true;
-
     }
 
-    public void SetSymbol(Sprite symbolSprite)
-    {
-        //symbolImage.sprite = collidingShapeSquare.symbolImage.sprite;
-        symbolImage.sprite = symbolSprite;
-        symbolImage.gameObject.SetActive(true);
-    }
-  
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision) // metoda wywoływana gdy ShapeSquare wejdzie w kolizję z tym polem
     {
         if(squareOccupied == false)
         {
@@ -84,12 +52,11 @@ public class GridSquare : MonoBehaviour
         }
         else if(collision.GetComponent<ShapeSquare>() != null)
         {
-            collidingShapeSquare = collision.GetComponent<ShapeSquare>();
             collision.GetComponent<ShapeSquare>().SetOccupied();
         }
 
     }
-    private void OnTriggerStay2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision) // metoda wywoływana w trakcie kolizji 
     {
         selected = true;
         if(squareOccupied == false)
@@ -101,12 +68,11 @@ public class GridSquare : MonoBehaviour
         }
         else if(collision.GetComponent<ShapeSquare>() != null)
         {
-          //  collidingShapeSquare = collision.GetComponent<ShapeSquare>();
             collision.GetComponent<ShapeSquare>().SetOccupied();
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision) // metoda wywoływana na koniec kolizji, tu następuje ewentualne wyąwietlenie symbolu na tym polu oraz sprawdzenie warunku końca gry
     {
         if(squareOccupied == false)
         {
@@ -115,12 +81,10 @@ public class GridSquare : MonoBehaviour
         }
         if(collision.GetComponent<ShapeSquare>() != null && squareOccupied == true)
         {
-            // Przepisanie symbolu
-
+            
             symbolImage.gameObject.SetActive(true);
             symbolPut = true;
             symbolIndex = indx;
-          // collidingShapeSquare = collision.GetComponent<ShapeSquare>();
             collision.GetComponent<ShapeSquare>().UnsetOccupied();
 
         }

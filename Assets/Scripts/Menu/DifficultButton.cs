@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DifficultButton : MonoBehaviour
+public class DifficultButton : MonoBehaviour // skrypt odpowiedzialny za wybranie trudnego poziomu trudności
 {
     public int difficultyLevel;
-    public Button easyButton;
+    public Button easyButton; // wskazanie na przycisk łatwego poziomu trudności
 
      private ColorBlock normalColors;
      private ColorBlock grayColors; 
@@ -12,30 +12,32 @@ public class DifficultButton : MonoBehaviour
 
     private void Start()
     {
-        // Domyślnie ustawiaj trudny poziom trudności jako wybrany
-        difficultyLevel = 1;
+       
         Button button = GetComponent<Button>();
         button.onClick.AddListener(OnClick);
         normalColors = button.colors;
 
         grayColors = normalColors;
-        grayColors.normalColor = Color.gray; // Kolor szary
-        grayColors.highlightedColor = Color.gray; // Kolor szary
-        grayColors.pressedColor = Color.gray; // Kolor szary
+        grayColors.normalColor = Color.gray; 
+        grayColors.highlightedColor = Color.gray; 
+        grayColors.pressedColor = Color.gray;
 
-        button.colors = grayColors ;
+        if (GameManager.instance.selectedDifficulty == 0)
+        {
+            button.colors = grayColors; 
+        }
+        else
+        {
+            button.colors = normalColors;
+        }
     }
 
-    public void OnClick()
+    public void OnClick() // funkcja wywoływana po naciśnięciu na przycisk
     {
-        GameManager.instance.ChangeDifficulty(difficultyLevel);
+        difficultyLevel = 1;
+        GameManager.instance.ChangeDifficulty(difficultyLevel); // zmiana poziomu trudności
 
         GetComponent<Button>().colors = normalColors;
-
-        grayColors = normalColors;
-        grayColors.normalColor = Color.gray; // Kolor szary
-        grayColors.highlightedColor = Color.gray; // Kolor szary
-        grayColors.pressedColor = Color.gray; // Kolor szary
 
         easyButton.colors = grayColors ;
     }

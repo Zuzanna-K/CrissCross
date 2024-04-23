@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour // służy do zapamiętania wybranego poziomu trudności
 {
     public static GameManager instance;
     public int selectedDifficulty; // 0 - łatwy 1 - trudny
@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject); // instancja tego obiektu nadal będzie istnieć, mimo zmiany scen
         }
         else
         {
@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ChangeDifficulty(int diff)
+    public void ChangeDifficulty(int diff) // funkcja do zmiany poziomu trudności
     {
         this.selectedDifficulty = diff;
     }

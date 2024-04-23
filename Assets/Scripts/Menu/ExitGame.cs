@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ExitGame : MonoBehaviour
+public class ExitGame : MonoBehaviour // skrypt pozwalający na wyjście z aplikacji, przypisany do przyciku ExitBtn
 {
     public void QuitGame()
     {

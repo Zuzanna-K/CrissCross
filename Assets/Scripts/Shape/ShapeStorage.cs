@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ShapeStorage : MonoBehaviour
+public class ShapeStorage : MonoBehaviour // klasa ułatwiająca dostęp do kafelka aktywnego w grze
 {
-       public Shape currentShape;
+    public Shape currentShape; // aktualny kafelek w grze
 
     private void OnEnable()
     {
@@ -16,16 +14,13 @@ public class ShapeStorage : MonoBehaviour
         GameEvents.RequestNewShape -= RequestNewShape;
     }
 
-    void Start()
+    void Start() // tworzenie pierwszego kafelka w grze
     {
-
-      //  currentShape.CreateShape(shapeData[0]);
-
       currentShape.CreateShape();
     }
 
 
-    public Shape GetCurrentSelectedShape()
+    public Shape GetCurrentSelectedShape() // zwraca obecny w grze kafelek
     {
          if (!currentShape.IsOnStartPosition() && currentShape.IsAnyOfShapeSquareActive())
                 return currentShape;
@@ -33,7 +28,7 @@ public class ShapeStorage : MonoBehaviour
                 else return null;
     }
 
-    private void RequestNewShape()
+    private void RequestNewShape() // ładuje nowy kafelek
     {
         currentShape.RequestNewShape();
     }

@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuButtons : MonoBehaviour
+public class MenuButtons : MonoBehaviour // skrypt pozwalający nawigować między scenami MainMenu(Menu Główne) i Game (Gra)
 {
     private void Awake()
     {
@@ -11,7 +9,7 @@ public class MenuButtons : MonoBehaviour
             Debug.unityLogger.logEnabled = false;
     }
 
-    public void LoadScene(string name)
+    public void LoadScene(string name) // załadowanie wskazanej sceny
     {
         SceneManager.LoadScene(name);
     }
