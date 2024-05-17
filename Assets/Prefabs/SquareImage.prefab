@@ -140,12 +140,12 @@ MonoBehaviour:
   occupiedImage: {fileID: 3405109465335014110}
   symbolImage: {fileID: 3719913409813188040}
   symbols:
-  - {fileID: 21300000, guid: 966bee0d6e322244b979eb0cd2a24abc, type: 3}
-  - {fileID: 21300000, guid: 1aee5e30aa0d0d342827223fce4bde7a, type: 3}
-  - {fileID: 21300000, guid: 8dd6d6f7cae23c44998680569480dd07, type: 3}
-  - {fileID: 21300000, guid: df199d911398f0a4d8fa3bd8e291d7e2, type: 3}
-  - {fileID: 21300000, guid: e4db5947406c57047835230c7dac0817, type: 3}
-  - {fileID: 21300000, guid: 5c544c6936c20104ba355ba7f42658d9, type: 3}
+  - {fileID: 21300000, guid: 4ef642e50534f7543901db7e773f6b82, type: 3}
+  - {fileID: 21300000, guid: b0ee82cd9d77a6f49b58290cb116746e, type: 3}
+  - {fileID: 21300000, guid: a9116f28a1556214887e4a15a4f849be, type: 3}
+  - {fileID: 21300000, guid: 9bc1c2ceb9090c642ae5dc4f8c905c07, type: 3}
+  - {fileID: 21300000, guid: 0d759cbcdbeef694086a230a3bf845c8, type: 3}
+  - {fileID: 21300000, guid: b1f393a18168e7749ac692426aa7bfb9, type: 3}
   symbolIndex: 0
 --- !u!114 &6221241435824823105
 MonoBehaviour:

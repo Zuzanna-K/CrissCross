@@ -24,13 +24,13 @@ public class MyGrid : MonoBehaviour
 
     private void OnEnable() // subskrybcja metod, pozwala na "komunikację" z innymi obiektami gry
     {
-        GameEvents.CheckIfShapeCanBePlaced += CheckIfShapeCanBePlaced;
+        GameEvents.PlaceShapeOnBoard += PlaceShapeOnBoard;
         GameEvents.EndOfGame += EndOfGame;
     }
 
     private void OnDisable()
     {
-        GameEvents.CheckIfShapeCanBePlaced -= CheckIfShapeCanBePlaced;
+        GameEvents.PlaceShapeOnBoard -= PlaceShapeOnBoard;
         GameEvents.EndOfGame -= EndOfGame;
     }
 
@@ -109,8 +109,12 @@ public class MyGrid : MonoBehaviour
         }
     }
 
-private void CheckIfShapeCanBePlaced() // metoda sprawdzająca czy gracz może położyć kafelek w wybranym przez siebie miejscu
+private void PlaceShapeOnBoard() // metoda sprawdzająca czy gracz może położyć kafelek w wybranym przez siebie miejscu
 {   
+    
+    var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
+    if (currentSelectedShape == null) return;
+
     var squareIndexes = new List<int>();
 
     foreach (var square in gridSquares)
@@ -124,12 +128,9 @@ private void CheckIfShapeCanBePlaced() // metoda sprawdzająca czy gracz może p
         }
     }
 
-    var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
-    if (currentSelectedShape == null) return;
 
-    if (currentSelectedShape.TotalSquareNumber == squareIndexes.Count)
+    if (squareIndexes.Count == 2)
     {
-        // Przypisanie symboli z kształtu na planszę
         for (int i = 0; i < squareIndexes.Count; i++)
         {
             var gridSquare = gridSquares[squareIndexes[i]].GetComponent<GridSquare>();
@@ -139,7 +140,7 @@ private void CheckIfShapeCanBePlaced() // metoda sprawdzająca czy gracz może p
  
              GameEvents.SetShapeInactive();
 
-             if(!ConditionToEnd())
+             if(!IsGameEnded())
              {
                 LoadNewShape();
              }
@@ -170,14 +171,14 @@ private void LoadNewShape() // metoda tworząca nowy kafelek, który gracz musi 
 
 private void EndOfGame() // metoda wywoływana na koniec bieżącej rozgrywki, wyświetlająca punktację końcową
 {
-    if (ConditionToEnd() == true)
+    if (IsGameEnded() == true)
     {
         finalScore.text = "Wynik: "+ Scoring().ToString();
     }
     else return;
 }
 
-private bool ConditionToEnd() // metoda sprawdzająca czy bieżąca rozgrywka powinna się zakończyć
+private bool IsGameEnded() // metoda sprawdzająca czy bieżąca rozgrywka powinna się zakończyć
 {
     for (int i = 0; i < rows; i++)
     {
@@ -185,18 +186,18 @@ private bool ConditionToEnd() // metoda sprawdzająca czy bieżąca rozgrywka po
         {
             var currentSquare = gridSquares[i * columns + j].GetComponent<GridSquare>();
 
-            if (!currentSquare.symbolPut)
+            if (currentSquare.symbolIndex == -1)
             {
-                if (j > 0 && !gridSquares[i * columns + j - 1].GetComponent<GridSquare>().symbolPut)
+                if (j > 0 && gridSquares[i * columns + j - 1].GetComponent<GridSquare>().symbolIndex == -1)
                     return false;
                 
-                if (j < columns - 1 && !gridSquares[i * columns + j + 1].GetComponent<GridSquare>().symbolPut)
+                if (j < columns - 1 && gridSquares[i * columns + j + 1].GetComponent<GridSquare>().symbolIndex == -1)
                     return false;
 
-                if (i > 0 && !gridSquares[(i - 1) * columns + j].GetComponent<GridSquare>().symbolPut)
+                if (i > 0 && gridSquares[(i - 1) * columns + j].GetComponent<GridSquare>().symbolIndex == -1)
                     return false;
 
-                if (i < rows - 1 && !gridSquares[(i + 1) * columns + j].GetComponent<GridSquare>().symbolPut)
+                if (i < rows - 1 && gridSquares[(i + 1) * columns + j].GetComponent<GridSquare>().symbolIndex == -1)
                     return false;
             }
         }
@@ -220,7 +221,7 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
         {
             var currentSquare = gridSquares[i * columns + j].GetComponent<GridSquare>();
 
-            if (currentSquare.symbolPut)
+            if (currentSquare.symbolIndex>-1)
             {
                 if (currentSquare.symbolIndex == previousSymbolIndex)
                 {
@@ -256,14 +257,12 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
         }
 
         
-
         if(GameManager.instance.selectedDifficulty == 1 && rowScore == 0) // punktacja dla trybu zaawansowanego
         {
             rowScore = -5;
         }
         totalScore += rowScore;
         rowsColsScores[i].text = rowScore.ToString();
-        //scoresRowsColumns.Add(rowScore);
     }
 
     // Sprawdź kolumnę
@@ -277,7 +276,7 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
         {
             var currentSquare = gridSquares[i * columns + j].GetComponent<GridSquare>();
 
-            if (currentSquare.symbolPut)
+            if (currentSquare.symbolIndex>-1)
             {
                 if (currentSquare.symbolIndex == previousSymbolIndex)
                 {
@@ -325,7 +324,7 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
 
     if (GameManager.instance.selectedDifficulty == 1) // punkty przekatnej prawy gorny rog - lewy dolny rog
     {
-        int diameterScore = 0;
+        int diagonalScore = 0;
         int consecutiveCount = 1;
         int previousSymbolIndex = -2;
  
@@ -334,7 +333,7 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
          
             var currentSquare = gridSquares[(i+1)*(rows -1)].GetComponent<GridSquare>();
 
-            if (currentSquare.symbolPut)
+            if (currentSquare.symbolIndex > -1)
             {
                 if (currentSquare.symbolIndex == previousSymbolIndex)
                 {
@@ -345,7 +344,7 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
                 {
                     if (consecutiveCount >= 2)
                     {
-                        diameterScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                        diagonalScore += GetScoreFromConsecutiveCount(consecutiveCount);
                         Debug.Log("koniec liczenia: po przekatnej w wierszu: " + i + " symboli z rzędu: " + consecutiveCount);
                     }
                     consecutiveCount = 1;
@@ -358,7 +357,7 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
             {
               if (consecutiveCount >= 2)
                 {
-                  diameterScore += GetScoreFromConsecutiveCount(consecutiveCount);
+                  diagonalScore += GetScoreFromConsecutiveCount(consecutiveCount);
                   Debug.Log("koniec liczenia: po przekatnej w wierszu: " + i + " symboli z rzędu: " + consecutiveCount);
                 }
                 previousSymbolIndex = -2;
@@ -369,19 +368,19 @@ private int Scoring() // metoda licząca punktację na podstawie aktualnego stan
 
         if (consecutiveCount >= 2)
         {
-            diameterScore += GetScoreFromConsecutiveCount(consecutiveCount);
+            diagonalScore += GetScoreFromConsecutiveCount(consecutiveCount);
             Debug.Log("Drugi - ewentualny koniec liczenia po przekatnej symboli z rzędu: " + consecutiveCount);
         }
 
-        if(diameterScore == 0)
+        if(diagonalScore == 0)
         {
-            diameterScore = -5;
+            diagonalScore = -5;
         }
 
 
-        rowsColsScores[rows + columns].text = diameterScore.ToString();
-        rowsColsScores[rows + columns +1].text = diameterScore.ToString();
-        totalScore += 2*diameterScore;
+        rowsColsScores[rows + columns].text = diagonalScore.ToString();
+        rowsColsScores[rows + columns +1].text = diagonalScore.ToString();
+        totalScore += 2*diagonalScore;
     }
 
     return totalScore;

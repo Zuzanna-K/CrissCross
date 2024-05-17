@@ -5,13 +5,9 @@ using UnityEngine.EventSystems;
 public class Shape : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler // klasa reprezentująca kafelek
 {
     public GameObject squareShapeImage; // prefabrykat pojedynczego kwadratu
-    public Vector3 shapeSelectedScale; // skala podnoszonego kafelka (lezacy kafelek jest troszeczke mniejszy od podnoszonego)
     public Vector2 offset = new Vector2(0f,700f);
 
-    public int TotalSquareNumber{get;set;} // ilość kwadratów budujących kafelek
-
     public List<GameObject> currentShape = new List<GameObject>(); // lista kwadratów ShapeSquare budujących ten kafelek
-    private Vector3 shapeStartScale;
     private RectTransform transformed;
     private Canvas canvas; // odwołanie do canvasu, w którym znajduje się kafelek
     private Vector3 startPosition;
@@ -20,7 +16,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDr
 
     public void Awake()
     {
-        shapeStartScale = this.GetComponent<RectTransform>().localScale; // poczatkowa skala obiektu
         transformed = this.GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         startPosition = transformed.localPosition;
@@ -114,8 +109,6 @@ public void CreateShape() // metoda tworząca kafelek - prawy i lewy SquareShape
     rightSquare.SetActive(true);
     rightSquare.GetComponent<RectTransform>().localPosition = new Vector2(squareShapeImage.GetComponent<RectTransform>().rect.width/2, 0);
     currentShape.Add(rightSquare);
-
-    TotalSquareNumber = currentShape.Count;
     ReloadShapeSymbols();
 }
 
@@ -127,7 +120,6 @@ public void CreateShape() // metoda tworząca kafelek - prawy i lewy SquareShape
      public void OnBeginDrag(PointerEventData eventData) // metoda wywoływana na początku przeciągania kafelka
      {
         startRotation = transformed.rotation;
-        this.GetComponent<RectTransform>().localScale = shapeSelectedScale;
      }
       public void OnDrag(PointerEventData eventData) // metoda wywoływana podczas przeciągania kafelka, aktualizująca jego pozycję
       {
@@ -142,7 +134,7 @@ public void CreateShape() // metoda tworząca kafelek - prawy i lewy SquareShape
     public void OnEndDrag(PointerEventData eventData)// metoda wywoływana po przeciągnięciu kafelka
     {
        transformed.rotation = startRotation;
-       this.GetComponent<RectTransform>().localScale = shapeStartScale;
+       
 
         foreach (var square in currentShape) // Obrót symboli tak, aby pasowały do obrotu kafelka
         {
@@ -151,7 +143,7 @@ public void CreateShape() // metoda tworząca kafelek - prawy i lewy SquareShape
             float symbolZRotation = -tileZRotation;
             symbolTransform.localRotation = Quaternion.Euler(0f, 0f, symbolZRotation);
         }
-        GameEvents.CheckIfShapeCanBePlaced();
+        GameEvents.PlaceShapeOnBoard();
      
     }
 

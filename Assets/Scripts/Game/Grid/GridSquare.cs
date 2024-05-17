@@ -12,8 +12,6 @@ public class GridSquare : MonoBehaviour // klasa reprezentująca pole planszy
     public int squareIndex; // indeks tego pola, pozwala na identyfikację jego położenia względem innych pól planszy
     public bool squareOccupied; // zmienna mówiąca czy pole już jest zajęte
 
-    public bool symbolPut; // zmienna określająca czy na tym polu gracz już umiejcowił symbol
-
     public int symbolIndex = -1; // indeks symbolu (indeks dotyczący listy dostępnych symboli) który jest na kafelku, domyślnie- brak symbolu
 
     private int indx = -1; // zmienna pomocnicza, potrzebna do manipulacji symbolami
@@ -23,14 +21,12 @@ public class GridSquare : MonoBehaviour // klasa reprezentująca pole planszy
     {
        selected = false;
        squareOccupied = false; 
-       symbolPut = false;
 
        if(squareIndex ==0) // pole w lewym  górnym rogu planszy jest na samym początku rozgrywki zajęte
        {
         indx = symbolIndex;
         selected = true;
         squareOccupied = true; 
-        symbolPut = true;
        }
     }
 
@@ -72,7 +68,7 @@ public class GridSquare : MonoBehaviour // klasa reprezentująca pole planszy
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision) // metoda wywoływana na koniec kolizji, tu następuje ewentualne wyąwietlenie symbolu na tym polu oraz sprawdzenie warunku końca gry
+    private void OnTriggerExit2D(Collider2D collision) // metoda wywoływana na koniec kolizji, tu następuje ewentualne wyświetlenie symbolu na tym polu oraz sprawdzenie warunku końca gry
     {
         if(squareOccupied == false)
         {
@@ -83,7 +79,6 @@ public class GridSquare : MonoBehaviour // klasa reprezentująca pole planszy
         {
             
             symbolImage.gameObject.SetActive(true);
-            symbolPut = true;
             symbolIndex = indx;
             collision.GetComponent<ShapeSquare>().UnsetOccupied();
 
